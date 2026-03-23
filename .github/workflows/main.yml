@@ -10,34 +10,52 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1. Checkout repository
       - name: Checkout
         uses: actions/checkout@v4
 
+      # 2. Setup Java (use Java 17 for better Cordova/Gradle compatibility)
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '21'
+          java-version: '17'
 
+      # 3. Setup Node.js
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: '18'
 
+      # 4. Install Cordova (match your project version)
       - name: Install Cordova
-        run: npm install -g cordova
+        run: npm install -g cordova@13.0.0
 
+      # 5. Clean old platforms (avoid conflicts)
+      - name: Clean Android platform
+        run: rm -rf platforms/android
+
+      # 6. Install any project dependencies (if you have package.json)
       - name: Install dependencies
         run: npm install || true
 
+      # 7. Add Android platform fresh
       - name: Add Android platform
         run: cordova platform add android
 
-      - name: Build APK
-        run: cordova build android
+      # 8. Install required plugins (add any extra plugins your project uses)
+      - name: Install plugins
+        run: |
+          cordova plugin add cordova-plugin-whitelist
+          cordova plugin add cordova-plugin-splashscreen
 
+      # 9. Build APK
+      - name: Build APK
+        run: cordova build android --release
+
+      # 10. Upload APK as artifact
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: MyApp-APK
-          path: platforms/android/app/build/outputs/apk/debug/app-debug.apk
+          name: AnimationApp-APK
+          path: platforms/android/app/build/outputs/apk/release/app-release.apk
