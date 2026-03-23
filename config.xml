@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='utf-8'?>
+‎<widget id="com.salims.imageapp" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+‎    
+‎    <name>ANIMATION APP</name>
+‎
+‎    <description>
+‎        Simple image display app
+‎    </description>
+‎
+‎    <author email="dev@cordova.apache.org" href="https://cordova.apache.org">
+‎        Apache Cordova Team
+‎    </author>
+‎
+‎    <content src="index.html" />
+‎
+‎    <allow-intent href="http://*/*" />
+‎    <allow-intent href="https://*/*" />
+‎
+‎    <platform name="android">
+‎        <icon src="res/icon.png" />
+‎    </platform>
+‎
+‎</widget>
