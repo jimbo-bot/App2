@@ -1,0 +1,69 @@
+name: Build APK
+‎
+‎on:
+‎  push:
+‎    branches:
+‎      - main
+‎
+‎jobs:
+‎  build:
+‎    runs-on: ubuntu-latest
+‎
+‎    steps:
+‎      # 1️⃣ Checkout the repo
+‎      - name: Checkout
+‎        uses: actions/checkout@v4
+‎
+‎      # 2️⃣ Setup Java 21
+‎      - name: Setup Java
+‎        uses: actions/setup-java@v4
+‎        with:
+‎          distribution: 'temurin'
+‎          java-version: '21'
+‎
+‎      # 3️⃣ Setup Node 18
+‎      - name: Setup Node
+‎        uses: actions/setup-node@v4
+‎        with:
+‎          node-version: '18'
+‎
+‎      # 4️⃣ Cache Node modules
+‎      - name: Cache Node modules
+‎        uses: actions/cache@v3
+‎        with:
+‎          path: ~/.npm
+‎          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+‎          restore-keys: |
+‎            ${{ runner.os }}-node-
+‎
+‎      # 5️⃣ Install Cordova globally
+‎      - name: Install Cordova
+‎        run: npm install -g cordova
+‎
+‎      # 6️⃣ Install project dependencies
+‎      - name: Install dependencies
+‎        run: npm install || true
+‎
+‎      # 7️⃣ Cache Cordova Android platform
+‎      - name: Cache Android platform
+‎        uses: actions/cache@v3
+‎        with:
+‎          path: platforms/android
+‎          key: ${{ runner.os }}-cordova-android-${{ hashFiles('config.xml') }}
+‎          restore-keys: |
+‎            ${{ runner.os }}-cordova-android-
+‎
+‎      # 8️⃣ Add Android platform (skip if cached)
+‎      - name: Add Android platform
+‎        run: cordova platform add android --no-interactive || echo "Platform already added"
+‎
+‎      # 9️⃣ Build APK
+‎      - name: Build APK
+‎        run: cordova build android --no-interactive
+‎
+‎      # 🔟 Upload APK artifact
+‎      - name: Upload APK
+‎        uses: actions/upload-artifact@v4
+‎        with:
+‎          name: MyApp-APK
+‎          path: platforms/android/app/build/outputs/apk/debug/app-debug.apk
